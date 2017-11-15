@@ -13,97 +13,57 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 
-class Socket_test_server extends Thread{
-    String inputdata;
+class TCPserver extends Thread{
+	private static final int port = 50000;
+	private Socket socket = null;
+	
+	public void run () {
+		try {
+			PrintWriter pw = new PrintWriter(socket.getOutputStream());
+			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			
+			String data = br.readLine();
+            //int x = Integer.parseInt(br.readLine());
 
-    public void run()
-    {
-        try{
+            System.out.println( socket.getLocalAddress() );
+            System.out.println(data);
+			int x=1;
+			for (int i=1 ; i<=x ; ++i) {
+				pw.println(data);
+				pw.flush();
+            }
+            
+            for(int step=0;step>1000;step++){;};
+            
+            //指定クライアントにデータを送る
+            Socket s = new Socket(socket.getLocalAddress(), 6005);
+            PrintWriter spw = new PrintWriter(s.getOutputStream());
+            spw.println(data+"応答");
+            spw.flush();
+            s.shutdownOutput();
+            s.close();
 
-            System.out.println(this.inputdata);
-            Thread.sleep(5000);
-
-            // データグラムの送信元であるマシンの IP アドレス取得
-                String ohost = "localhost";
-
-			    Socket o_s = new Socket(ohost, 6005);
-			    PrintWriter opw = new PrintWriter(o_s.getOutputStream());
-                //opw.println(this.inputdata);
-                opw.println("ok!");
-
-			    // 出力ストリームをフラッシュ => 送信
-			    opw.flush();
-		    	// Finを送る
-			    o_s.shutdownOutput();
-			    // ソケットを閉じる
-			    o_s.close();
-
-                return;
-
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args)
-    {
-
-        try{
-             ServerSocket server=new ServerSocket(6000);
-
-            while(true){
-            Socket socket=server.accept();
-            BufferedReader br =new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            socket.close();
 
 
-            String data;
-            while(true){
-				data = br.readLine();
-				if(data == null){break;}
-
-				System.out.println(data);
-
-                //Thread Start
-                Socket_test_server SS=new Socket_test_server();
-                SS.inputdata=data;
-                SS.start();
-                }
-
-                // 入力ストリームを閉じる
-			    br.close();
-                socket.close();
-                server.close();
-
-                /*
-                //スレッドの起動
-                SS.start();
-
-                // データグラムの送信元であるマシンの IP アドレス取得
-                String ohost = "localhost";
-			    int oport = 60002;
-
-			    Socket o_s = new Socket(ohost, oport);
-			    PrintWriter opw = new PrintWriter(o_s.getOutputStream());
-			    opw.println("ok!");
-
-			    // 出力ストリームをフラッシュ => 送信
-			    opw.flush();
-		    	// Finを送る
-			    o_s.shutdownOutput();
-			    // ソケットを閉じる
-			    o_s.close();
-            */
-
-            }//while end
-
-        }
-        catch(Exception e){
+		}
+		catch (Exception e) {
+			System.out.println("Error: " + e.toString());
+		}
+	}
+	
+	public static void main(String args[]){
+		try{
+			ServerSocket ss = new ServerSocket(port);
+			
+			while (true) {
+				TCPserver server = new TCPserver();
+				server.socket = ss.accept();
+				server.start();
+			}
+		}
+		catch(Exception e){
 			System.out.println(e);
 		}
-
-    }//end main
-
-       
-}//end class
+	}
+}
