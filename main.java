@@ -18,7 +18,9 @@ import java.io.FileNotFoundException;
 
 class TCPserver extends Thread{
 	private static final int port = 50000;
-	private Socket socket = null;
+    private Socket socket = null;
+    static int main_roop_flag;
+    
 	
 	public void run () {
 		try {
@@ -31,7 +33,19 @@ class TCPserver extends Thread{
             System.out.println( socket.getLocalAddress() );
             System.out.println(data);
 			pw.println(data);
-			pw.flush();
+            pw.flush();
+            
+            if(data.equals("end_flag"))
+            {
+                System.out.println("get end flag");
+                System.out.println(socket.getLocalAddress());
+                if((socket.getLocalAddress()).equals("127.0.0.1"))
+                {
+                    System.out.println("Server end processing");
+                    main_roop_flag=0;
+                }
+                
+            }
             
             for(int step=0;step>1000;step++){;};
             
@@ -58,12 +72,16 @@ class TCPserver extends Thread{
         System.out.println("version:");
         file_check_version();
 
+        //init status
+        main_roop_flag=1;
+
 
         //start server
 		try{
 			ServerSocket ss = new ServerSocket(port);
 			
-			while (true) {
+            while (main_roop_flag==1)
+            {
 				TCPserver server = new TCPserver();
 				server.socket = ss.accept();
 				server.start();
@@ -71,7 +89,12 @@ class TCPserver extends Thread{
 		}
 		catch(Exception e){
 			System.out.println(e);
-		}
+        }
+        
+        //server end processing
+        //ex.save_data();
+        System.out.println("end processing compeleted");
+
     }
     
     public  static String file_check_version()
