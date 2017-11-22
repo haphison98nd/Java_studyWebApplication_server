@@ -11,6 +11,9 @@ import java.net.UnknownHostException;
 import java.net.SocketException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileNotFoundException;
 
 
 class TCPserver extends Thread{
@@ -27,11 +30,8 @@ class TCPserver extends Thread{
 
             System.out.println( socket.getLocalAddress() );
             System.out.println(data);
-			int x=1;
-			for (int i=1 ; i<=x ; ++i) {
-				pw.println(data);
-				pw.flush();
-            }
+			pw.println(data);
+			pw.flush();
             
             for(int step=0;step>1000;step++){;};
             
@@ -53,6 +53,13 @@ class TCPserver extends Thread{
 	}
 	
 	public static void main(String args[]){
+
+        //out put version info
+        System.out.println("version:");
+        file_check_version();
+
+
+        //start server
 		try{
 			ServerSocket ss = new ServerSocket(port);
 			
@@ -65,5 +72,41 @@ class TCPserver extends Thread{
 		catch(Exception e){
 			System.out.println(e);
 		}
-	}
+    }
+    
+    public  static String file_check_version()
+    {
+        String str="";
+        try{
+            File file = new File("version.txt");
+            if (checkBeforeReadfile(file)){
+              BufferedReader br = new BufferedReader(new FileReader(file));
+              while((str = br.readLine()) != null){
+                System.out.println(str);
+              }
+              br.close();
+              return str;
+            }else{
+              System.out.println("ファイルが見つからないか開けません");
+              return str;
+
+            }
+          }catch(FileNotFoundException e){
+            System.out.println(e);
+            return str;
+          }catch(IOException e){
+            System.out.println(e);
+            return str;
+          }
+    }
+    //ファイルチェッカー
+    public static boolean checkBeforeReadfile(File file)
+    {
+        if (file.exists()){if (file.isFile() && file.canRead()){return true;}}return false;
+    }
+
 }
+
+
+
+
