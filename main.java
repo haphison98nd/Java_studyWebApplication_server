@@ -14,7 +14,8 @@ import java.net.Socket;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileNotFoundException;
-
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 class TCPserver extends Thread{
 	private static final int port = 50000;
@@ -38,8 +39,10 @@ class TCPserver extends Thread{
             if(data.equals("end_flag"))
             {
                 System.out.println("get end flag");
-                System.out.println(socket.getLocalAddress());
-                if((socket.getLocalAddress()).equals("127.0.0.1"))
+                InetAddress IntentAddr = socket.getInetAddress();
+                System.out.println(socket.getInetAddress());
+                String temp_ip="";//socket.getLocalAddress();
+                if( temp_ip.equals("/127.0.0.1"))
                 {
                     System.out.println("Server end processing");
                     main_roop_flag=0;
@@ -50,7 +53,7 @@ class TCPserver extends Thread{
             for(int step=0;step>1000;step++){;};
             
             //指定クライアントにデータを送る
-            Socket s = new Socket(socket.getLocalAddress(), 6005);
+            Socket s = new Socket(socket.getInetAddress(), 6005);
             PrintWriter spw = new PrintWriter(s.getOutputStream());
             spw.println(data+"応答");
             spw.flush();
