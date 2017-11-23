@@ -36,8 +36,6 @@ class TCPserver extends Thread{
                 
             }
             
-            
-
 
 
 		}
@@ -64,7 +62,6 @@ class TCPserver extends Thread{
             {
 				TCPserver server = new TCPserver();
                 server.socket = ss.accept();
-                ss.close();
 				server.start();
 			}
 		}
