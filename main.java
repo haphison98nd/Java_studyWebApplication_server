@@ -1,42 +1,28 @@
-import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
-import java.io.InputStream;
-import java.io.PrintWriter;
-import java.util.Iterator;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.net.SocketException;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileNotFoundException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.io.*;
+import java.net.*;
 
 class TCPserver extends Thread{
-	private static final int port = 50000;
+	private static final int port = 6005;
     private Socket socket = null;
     static int main_roop_flag;
     
 	
 	public void run () {
 		try {
-			PrintWriter pw = new PrintWriter(socket.getOutputStream());
-			BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-			
-			String data = br.readLine();
-            //int x = Integer.parseInt(br.readLine());
-
-            System.out.println( socket.getLocalAddress() );
-            System.out.println(data);
-			pw.println(data);
-            pw.flush();
+            InputStream sok_in = socket.getInputStream();
+			InputStreamReader sok_is = new InputStreamReader(sok_in);
+			BufferedReader sok_br = new BufferedReader(sok_is);
+            OutputStream os = socket.getOutputStream();
+            String receive =  sok_br.readLine();
             
-            if(data.equals("end_flag"))
+            System.out.println(receive);
+            receive =  sok_br.readLine();
+            //指定クライアントにデータを送信
+            String send=receive+"応答";
+			os.write(send.getBytes());//送信
+
+            
+            if(receive.equals("end_flag"))
             {
                 System.out.println("get end flag");
                 InetAddress IntentAddr = socket.getInetAddress();
@@ -50,17 +36,8 @@ class TCPserver extends Thread{
                 
             }
             
-            for(int step=0;step>1000;step++){;};
             
-            //指定クライアントにデータを送る
-            Socket s = new Socket(socket.getInetAddress(), 6005);
-            PrintWriter spw = new PrintWriter(s.getOutputStream());
-            spw.println(data+"応答");
-            spw.flush();
-            s.shutdownOutput();
-            s.close();
 
-            socket.close();
 
 
 		}
@@ -86,7 +63,8 @@ class TCPserver extends Thread{
             while (main_roop_flag==1)
             {
 				TCPserver server = new TCPserver();
-				server.socket = ss.accept();
+                server.socket = ss.accept();
+                ss.close();
 				server.start();
 			}
 		}
