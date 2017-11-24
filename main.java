@@ -20,8 +20,7 @@ class TCPserver extends Thread{
             System.out.println(buff);
             
             //指定クライアントにデータを送信
-            System.out.print("送信文字列>>");
-            String send="応答@"+buff;
+            String send="receive@"+buff;
             String receive="rec";
             
 			osStr.write(send.getBytes());//送信
@@ -42,7 +41,8 @@ class TCPserver extends Thread{
             
 
 
-		}
+        }
+        
 		catch (Exception e) {
 			System.out.println("Error: " + e.toString());
 		}
@@ -67,7 +67,7 @@ class TCPserver extends Thread{
             {
 				TCPserver server = new TCPserver();
                 socket = ss.accept();
-                System.out.println(socket.getInetAddress() + "接続受付");
+                System.out.println(socket.getInetAddress() + "accept");
                 //ss.close();
 				server.start();
 			}
@@ -95,7 +95,7 @@ class TCPserver extends Thread{
               br.close();
               return str;
             }else{
-              System.out.println("ファイルが見つからないか開けません");
+              System.out.println("File not found");
               return str;
 
             }
