@@ -21,19 +21,20 @@ class TCPserver extends Thread{
             
             //指定クライアントにデータを送信
             String send="receive@"+buff;
-            String receive="rec";
-            
 			osStr.write(send.getBytes());//送信
 
-            if(receive.equals("end_flag"))
+            if(buff.equals("end_flag"))
             {
                 System.out.println("get end flag");
                 InetAddress IntentAddr = socket.getInetAddress();
-                System.out.println(socket.getInetAddress());
-                String temp_ip="";//socket.getLocalAddress();
+                System.out.println("IP:"+socket.getInetAddress());
+                String temp_ip=IntentAddr.toString();//socket.getLocalAddress();
                 if( temp_ip.equals("/127.0.0.1"))
                 {
                     System.out.println("Server end processing");
+
+                    ss.close();
+                    socket.close();
                     main_roop_flag=0;
                 }
                 
