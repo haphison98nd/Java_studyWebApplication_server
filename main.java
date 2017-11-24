@@ -3,25 +3,29 @@ import java.net.*;
 
 class TCPserver extends Thread{
 	private static final int port = 6005;
-    private Socket socket = null;
+    static Socket socket = null;
+    static ServerSocket ss=null;
     static int main_roop_flag;
     
 	
 	public void run () {
 		try {
-            InputStream sok_in = socket.getInputStream();
-			InputStreamReader sok_is = new InputStreamReader(sok_in);
-			BufferedReader sok_br = new BufferedReader(sok_is);
-            OutputStream os = socket.getOutputStream();
-            String receive =  sok_br.readLine();
-            
-            System.out.println(receive);
-            receive =  sok_br.readLine();
-            //指定クライアントにデータを送信
-            String send=receive+"応答";
-			os.write(send.getBytes());//送信
+            OutputStream osStr = socket.getOutputStream();
+            InputStream is = socket.getInputStream();
+            BufferedReader irStr = new BufferedReader(new InputStreamReader(is));
+            byte[] inputBuff = new byte[512];
 
+            int recvByteLength = is.read(inputBuff);
+            String buff = new String(inputBuff , 0 , recvByteLength);
+            System.out.println(buff);
             
+            //指定クライアントにデータを送信
+            System.out.print("送信文字列>>");
+            String send="応答@"+buff;
+            String receive="rec";
+            
+			osStr.write(send.getBytes());//送信
+
             if(receive.equals("end_flag"))
             {
                 System.out.println("get end flag");
@@ -56,17 +60,20 @@ class TCPserver extends Thread{
 
         //start server
 		try{
-			ServerSocket ss = new ServerSocket(port);
+            ss = new ServerSocket(port);
+            
 			
             while (main_roop_flag==1)
             {
 				TCPserver server = new TCPserver();
-                server.socket = ss.accept();
+                socket = ss.accept();
+                System.out.println(socket.getInetAddress() + "接続受付");
+                //ss.close();
 				server.start();
 			}
 		}
 		catch(Exception e){
-			System.out.println(e);
+            System.out.println(e);
         }
         
         //server end processing
