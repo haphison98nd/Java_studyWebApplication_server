@@ -7,7 +7,6 @@ class TCPserver extends Thread{
     static ServerSocket ss=null;
     static int main_roop_flag;
     
-	
 	public void run () {
 		try {
             OutputStream osStr = socket.getOutputStream();
@@ -18,29 +17,26 @@ class TCPserver extends Thread{
             int recvByteLength = is.read(inputBuff);
             String buff = new String(inputBuff , 0 , recvByteLength);
             System.out.println(buff);
-            
-            //指定クライアントにデータを送信
-            String send="receive@"+buff;
-			osStr.write(send.getBytes());//送信
 
+            //end process
             if(buff.equals("end_flag"))
             {
-                System.out.println("get end flag");
                 InetAddress IntentAddr = socket.getInetAddress();
-                System.out.println("IP:"+socket.getInetAddress());
-                String temp_ip=IntentAddr.toString();//socket.getLocalAddress();
+                String temp_ip=IntentAddr.toString();
                 if( temp_ip.equals("/127.0.0.1"))
                 {
-                    System.out.println("Server end processing");
-
-                    ss.close();
-                    socket.close();
+                    end_processing();
                     main_roop_flag=0;
+                    buff="end_ping";
                 }
-                
             }
-            
 
+
+            //指定クライアントにデータを送信
+            String send="receive@"+buff;
+            osStr.write(send.getBytes());//送信
+            socket.close();
+            
 
         }
         
@@ -55,21 +51,23 @@ class TCPserver extends Thread{
         System.out.println("version:");
         file_check_version();
 
+        //open data file
+        //
+        //
+
+
         //init status
         main_roop_flag=1;
-
 
         //start server
 		try{
             ss = new ServerSocket(port);
-            
-			
+
             while (main_roop_flag==1)
             {
 				TCPserver server = new TCPserver();
                 socket = ss.accept();
                 System.out.println(socket.getInetAddress() + "accept");
-                //ss.close();
 				server.start();
 			}
 		}
@@ -77,9 +75,18 @@ class TCPserver extends Thread{
             System.out.println(e);
         }
         
+
+        try{
+            ss.close();
+		}
+		catch(Exception e){
+            System.out.println(e);
+        }
+
         //server end processing
-        //ex.save_data();
         System.out.println("end processing compeleted");
+
+
 
     }
     
@@ -108,14 +115,19 @@ class TCPserver extends Thread{
             return str;
           }
     }
+
     //ファイルチェッカー
     public static boolean checkBeforeReadfile(File file)
     {
-        if (file.exists()){if (file.isFile() && file.canRead()){return true;}}return false;
+        if (file.exists()){if (file.isFile() && file.canRead()){return true;}}
+        return false;
     }
 
+    //
+    public static void end_processing()
+    {
+        ;
+    }
+    
+
 }
-
-
-
-
