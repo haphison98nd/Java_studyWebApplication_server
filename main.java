@@ -6,6 +6,7 @@ class TCPserver extends Thread{
     static Socket socket = null;
     static ServerSocket ss=null;
     static int main_roop_flag;
+    static String version_info;
     
 	public void run () {
 		try {
@@ -32,8 +33,24 @@ class TCPserver extends Thread{
             }
 
 
-            //指定クライアントにデータを送信
+
             String send="receive@"+buff;
+
+            if(buff.equals("check_ip"))
+            {
+                InetAddress IntentAddr = socket.getInetAddress();
+                String temp_ip=IntentAddr.toString();
+                if( temp_ip.equals("/127.0.0.1"))
+                {
+                    send=version_info;
+                }
+            }
+            else{
+                send="receive@"+buff;
+            }
+
+
+            //指定クライアントにデータを送信
             osStr.write(send.getBytes());//送信
             socket.close();
             
@@ -48,8 +65,8 @@ class TCPserver extends Thread{
 	public static void main(String args[]){
 
         //out put version info
-        System.out.println("version:");
-        file_check_version();
+        version_info=file_check_version();
+        System.out.println("version:"+version_info);
 
         //open data file
         //
@@ -97,9 +114,7 @@ class TCPserver extends Thread{
             File file = new File("version.txt");
             if (checkBeforeReadfile(file)){
               BufferedReader br = new BufferedReader(new FileReader(file));
-              while((str = br.readLine()) != null){
-                System.out.println(str);
-              }
+              str=br.readLine();
               br.close();
               return str;
             }else{
