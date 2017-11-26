@@ -1,13 +1,34 @@
 import java.io.* ;
 import java.net.* ;
 
+
 class updater{
 	public static void main(String args[]){
     
     String version_info=loadversion("version.txt");
-    System.out.println("load to now "+version_info);
     String get_version=tcp_text("check_ip");
     System.out.println("Server now version:"+get_version);
+    if(  !(version_info.equals(get_version))  )
+    {
+      System.out.println("Server Update Start");
+      String recive=tcp_text("end_flag");
+      System.out.println("get end_flag="+recive);
+
+      if("end_ping".equals(recive))
+      {
+        System.out.println("Restart Server");
+        String hoge=tcp_text("last_ping");
+
+        System.out.println(hoge);
+        TCPserver tcpserver=new TCPserver();
+        String[] arg={"hoge","hoge"};
+        tcpserver.main(arg);
+      }
+    }
+    else
+    {
+      System.out.println("up to date!!");
+    }
 
   }
   

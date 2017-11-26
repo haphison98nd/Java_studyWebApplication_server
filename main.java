@@ -19,23 +19,9 @@ class TCPserver extends Thread{
             String buff = new String(inputBuff , 0 , recvByteLength);
             System.out.println(buff);
 
-            //end process
-            if(buff.equals("end_flag"))
-            {
-                InetAddress IntentAddr = socket.getInetAddress();
-                String temp_ip=IntentAddr.toString();
-                if( temp_ip.equals("/127.0.0.1"))
-                {
-                    end_processing();
-                    main_roop_flag=0;
-                    buff="end_ping";
-                }
-            }
-
-
 
             String send="receive@"+buff;
-
+            
             if(buff.equals("check_ip"))
             {
                 InetAddress IntentAddr = socket.getInetAddress();
@@ -45,8 +31,17 @@ class TCPserver extends Thread{
                     send=version_info;
                 }
             }
-            else{
-                send="receive@"+buff;
+            //end process
+            if(buff.equals("end_flag"))
+            {
+                InetAddress IntentAddr = socket.getInetAddress();
+                String temp_ip=IntentAddr.toString();
+                if( temp_ip.equals("/127.0.0.1"))
+                {
+                    end_processing();
+                    main_roop_flag=0;
+                    send="end_ping";
+                }
             }
 
 
