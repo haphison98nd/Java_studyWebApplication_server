@@ -4,27 +4,25 @@ import java.net.* ;
 class updater{
 	public static void main(String args[]){
     
-    JavaTCP_Updater jtcp=new JavaTCP_Updater();
-    String version_info=jtcp.loadversion("version.txt");
-    System.out.println(version_info);
+    String version_info=loadversion("version.txt");
+    System.out.println("load to now "+version_info);
+    String get_version=tcp_text("check_ip");
+    System.out.println("Server now version:"+get_version);
 
-	}
-}
-
-
-class JavaTCP_Updater{
-  public String tcp_text(String data)
+  }
+  
+  public static String tcp_text(String data)
   {
     try{
       String host="127.0.0.1";
       //new socket
 			Socket s = new Socket(host, 6005);
-            
-      //stream
+      //set stream
       OutputStream osStr = s.getOutputStream();
       InputStream is = s.getInputStream();
+
       //output server
-      osStr.write( data.getBytes() , 0 , data.length() ); 
+      osStr.write( data.getBytes() , 0 , data.length() );
 
       for(int i=0;i<1000;i++){;};
       //receve
@@ -40,19 +38,19 @@ class JavaTCP_Updater{
 			return e.toString();
     }
   }
-  
+
+
   //ファイルからversion情報を読み取る
-  public String loadversion(String filepass)
+  public static String loadversion(String filepass)
    {
      String str="";
      try{
        File file = new File(filepass);
        if (checkBeforeReadfile(file)){
        BufferedReader br = new BufferedReader(new FileReader(file));
-       while((str = br.readLine()) != null){
-         System.out.println("lead version is "+str);
-        }
-        br.close();
+       str=br.readLine();
+       System.out.println("lead version is "+str);
+       br.close();
       
       }else{System.out.println("File not found");}
     }catch(FileNotFoundException e){
@@ -63,11 +61,11 @@ class JavaTCP_Updater{
     
     return str;
   }
-
-    //ファイルチェッカー
-    private boolean checkBeforeReadfile(File file)
-    {
-        if (file.exists()){if (file.isFile() && file.canRead()){return true;}}return false;
-    }
+  
+  //ファイルチェッカー
+  public static boolean checkBeforeReadfile(File file)
+  {
+    if (file.exists()){if (file.isFile() && file.canRead()){return true;}}return false;
+  }
 
 }
